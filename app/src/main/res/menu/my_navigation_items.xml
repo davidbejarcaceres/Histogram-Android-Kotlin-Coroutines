@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_search"
+          android:title="Kotlin"
+          android:icon="@drawable/ic_launcher_foreground" />
+    <item android:id="@+id/action_settings"
+          android:title="Nativo"
+          android:icon="@drawable/ic_launcher_foreground" />
+    <item android:id="@+id/action_navigation"
+          android:title="Otros"
+          android:icon="@drawable/ic_launcher_foreground" />
+</menu>

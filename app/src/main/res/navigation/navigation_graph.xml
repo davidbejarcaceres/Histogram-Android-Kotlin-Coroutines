@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools" android:id="@+id/navigation_graph"
+            app:startDestination="@id/fragmentKotlinHistograma3">
+    <fragment android:id="@+id/fragmentKotlinHistograma3"
+              android:name="com.caceres.bejar.david.histogramakotlin.FragmentKotlinHistograma"
+              android:label="fragment_fragment_kotlin_histograma"
+              tools:layout="@layout/fragment_fragment_kotlin_histograma"/>
+    <fragment android:id="@+id/fragmentNativo2" android:name="com.caceres.bejar.david.histogramakotlin.FragmentNativo"
+              android:label="fragment_fragment_nativo" tools:layout="@layout/fragment_fragment_nativo"/>
+    <fragment android:id="@+id/fragmentOther2" android:name="com.caceres.bejar.david.histogramakotlin.FragmentOther"
+              android:label="fragment_fragment_other" tools:layout="@layout/fragment_fragment_other"/>
+</navigation>
