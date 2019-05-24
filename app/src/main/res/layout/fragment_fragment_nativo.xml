@@ -23,5 +23,20 @@
             android:id="@+id/btnCallNativeCode" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp" android:textSize="18sp"
             android:layout_marginBottom="32dp" app:layout_constraintBottom_toTopOf="@+id/txtNativoJNI"/>
+    <Button
+            android:text="Native Session3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnNativeHistogram" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="48dp" app:layout_constraintTop_toBottomOf="@+id/txtNativoJNI"/>
+    <TextView
+            android:text="Time Histogram Native"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtHistogramNative"
+            app:layout_constraintTop_toTopOf="@+id/btnNativeHistogram" app:layout_constraintBottom_toBottomOf="@+id/btnNativeHistogram"
+            app:layout_constraintStart_toEndOf="@+id/btnNativeHistogram" android:layout_marginStart="24dp"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp" android:textSize="18sp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

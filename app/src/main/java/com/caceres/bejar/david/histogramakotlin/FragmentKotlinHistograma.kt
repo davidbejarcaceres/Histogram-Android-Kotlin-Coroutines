@@ -5,11 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
+import android.widget.*
 import kotlin.system.measureTimeMillis
 import kotlinx.coroutines.*
+import java.util.concurrent.atomic.AtomicLong
 import kotlin.math.PI
+import kotlin.math.log10
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -27,6 +28,14 @@ class FragmentKotlinHistograma : Fragment() {
     lateinit var btnCoroutine: Button
     lateinit var txtTime: TextView
     lateinit var txtTimeCoroutine: TextView
+    lateinit var btnSession2: Button
+    lateinit var txtSession2: TextView
+
+    lateinit var btnSession2MultiThread: Button
+    lateinit var txtSession2MultiThread: TextView
+
+    lateinit var checkBoxMultiThread: CheckBox
+    lateinit var editTxtNumberThread: EditText
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,6 +52,23 @@ class FragmentKotlinHistograma : Fragment() {
         txtTime = view.findViewById(R.id.txtHistogram)
         txtTimeCoroutine = view.findViewById(R.id.txtCorrutine)
 
+        btnSession2 = view.findViewById<Button>(R.id.buttonSession2)
+        txtSession2 = view.findViewById(R.id.txtSession2)
+
+        btnSession2MultiThread = view.findViewById<Button>(R.id.btnMultiThread)
+        txtSession2MultiThread = view.findViewById(R.id.txtMultiThead)
+
+        checkBoxMultiThread = view.findViewById(R.id.checkBMultiThread)
+        editTxtNumberThread = view.findViewById(R.id.txtCoroutinesNumber)
+
+        checkBoxMultiThread.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked){
+                editTxtNumberThread.setEnabled(true);
+            } else{
+                editTxtNumberThread.setEnabled(false);
+            }
+        })
+
         // Calculates the histogram and return the time to show in the textView
         btnCalculate.setOnClickListener {
             txtTime.setText("Calculando...")
@@ -55,6 +81,47 @@ class FragmentKotlinHistograma : Fragment() {
             GlobalScope.launch(Dispatchers.Main) {
                 val tiempo = async(Dispatchers.Default) { calculateHistogramCoroutine() } // Get from Default Context
                 txtTimeCoroutine.setText("${tiempo.await()} seg.")
+            }
+        }
+
+        // Calculates histogram using more resouces, part of SESSION 2
+        btnSession2.setOnClickListener {
+            txtSession2.setText("Calculando...")
+            GlobalScope.launch(Dispatchers.Main) {
+                val tiempo = async(Dispatchers.Default) { histrogramMultiOptimized(1) } // Get from Default Context
+                txtSession2.setText("${tiempo.await()} seg.")
+            }
+        }
+
+        // Calculates histogram with multiThread capabilities, SESSION 2
+        btnSession2MultiThread.setOnClickListener {
+            txtSession2MultiThread.setText("Calculando...")
+            if (checkBoxMultiThread.isChecked){
+                GlobalScope.launch(Dispatchers.Main) {
+                    var coroutines: Int = editTxtNumberThread.text.toString().toInt()
+                    if (coroutines < 1 || coroutines > 16) coroutines = 8 // If number of coroutine is absurd, 8 are used
+                    var listaJobsInit: ArrayList<Deferred<Double>> = arrayListOf<Deferred<Double>>()
+
+                    var time = measureTimeMillis {
+                        for (i in 0 until coroutines){
+                            listaJobsInit.add(async(Dispatchers.Default) { histrogramSession2MultiThread(i, coroutines) }) // Get from Default Context)
+                        }
+                        // waits for all jobs to be done.
+                        var sumEachThread = listaJobsInit.awaitAll()
+                    }
+                    txtSession2MultiThread.setText("${time / 1000.00} seg.")
+                    println("TOTAL TIME ONE THREAD: ${time / 1000.00} seg")
+
+                }
+            } else{
+                GlobalScope.launch(Dispatchers.Main) {
+                    var tiempoTotal = measureTimeMillis {
+                        val tiempo1 = async(Dispatchers.Default) { histrogramSession2MultiThread(0, 1) } // Get from Default Context
+                        txtSession2MultiThread.setText("${tiempo1.await()} seg.")
+                    }
+                    txtSession2MultiThread.setText("${tiempoTotal / 1000.00} seg.")
+                    println("TOTAL TIME ONE THREAD: ${tiempoTotal / 1000.00} seg")
+                }
             }
         }
     }
@@ -84,11 +151,10 @@ class FragmentKotlinHistograma : Fragment() {
                     for (k in 0..2)
                         h[k][imagen[k][i][j].toInt()]++ // Contabiliza el número de veces que aparece cada valor.
         }
-        return time.toDouble() / 1000.0
+        return time.toDouble() / 100.0
     }
 
-
-    // Not Coroutine Blocking method, uses Main Thread
+    // Not Coroutine, Blocking method, uses Main Thread
     fun calculateHistogram(): String{
         val h = Array(3) { ShortArray(256) } //array con el histograma
         // Ejemplo de la llamada a un método nativo
@@ -113,56 +179,132 @@ class FragmentKotlinHistograma : Fragment() {
                     for (k in 0..2)
                         h[k][imagen[k][i][j].toInt()]++ // Contabiliza el número de veces que aparece cada valor.
         }
+        return time.toDouble() / 100.0
+    }
+
+    suspend fun histrogramSession2(): Double = withContext(Dispatchers.Default){
+        var time = measureTimeMillis {
+            var aux: Long = 0
+            val tam = 1000 // Imagen de 1.000 x 1.000 pixeles RGB
+            val imagen = Array(3) { Array(tam){IntArray(tam)} }
+            val h = Array(3) { IntArray(256) } //array con el histograma
+            for (i in 0..255)
+            // Inicializa el histograma.
+                for (k in 0..2) h[k][i] = 0
+            for (i in 0 until tam)
+            // Inicializa la imagen.
+                for (j in 0 until tam)
+                    for (k in 0..2) imagen[k][i][j] = (i * j % 256)
+            for (i in 0 until tam)
+            // Contabiliza el nº veces que aparece cada valor.
+                for (j in 0 until tam)
+                    for (k in 0..2) h[k][imagen[k][i][j]]++
+
+            for (i in 0 until tam) { // Modificar imagen utilizando el histograma
+                for (j in 0 until tam)
+                    for (k in 0..2) {
+                        for (x in 0..255) {
+                            aux = (h[k][x] * h[k][x] * h[k][x] * h[k][x] - h[k][x] * h[k][x] * h[k][x] + h[k][x] * h[k][x]).toLong()
+                            h[k][x] = (aux % 256).toInt()
+                        }
+                        imagen[k][i][j] = (imagen[k][i][j] * h[k][imagen[k][i][j]])
+                    }
+            }
+        }
+        //Returns the time used for the operation
+        time.toDouble()
+        val totalTime = time.toDouble() / 1000.00
+        totalTime
+    }
+
+    suspend fun histrogramSession2MultiThread(taskId: Int, nTasks: Int): Double = withContext(Dispatchers.Default){
+        var time = measureTimeMillis {
+            var aux: Long = 0
+            val tam = 1000 // Imagen de 1.000 x 1.000 pixeles RGB
+            val imagen = Array(3) { Array(tam){IntArray(tam)} }
+            val h = Array(3) { IntArray(256) } //array con el histograma
+            var ini = (  (taskId * tam) / nTasks).toInt()
+            var fin = (((taskId +1).toLong() * tam) / nTasks).toInt()
+
+            for (i in 0..255)
+            // Inicializa el histograma.
+                for (k in 0..2) h[k][i] = 0
+            for (i in 0 until tam)
+            // Inicializa la imagen.
+                for (j in 0 until tam)
+                    for (k in 0..2) imagen[k][i][j] = (i * j % 256)
+            for (i in 0 until tam)
+            // Contabiliza el nº veces que aparece cada valor.
+                for (j in 0 until tam)
+                    for (k in 0..2) h[k][imagen[k][i][j]]++
+
+            for (i in ini until fin) { // Modificar imagen utilizando el histograma
+                for (j in 0 until tam)
+                    for (k in 0..2) {
+                        for (x in 0..255) {
+                            aux = (h[k][x] * h[k][x] * h[k][x] * h[k][x] - h[k][x] * h[k][x] * h[k][x] + h[k][x] * h[k][x]).toLong()
+                            h[k][x] = (aux % 256).toInt()
+                        }
+                        imagen[k][i][j] = (imagen[k][i][j] * h[k][imagen[k][i][j]])
+                    }
+            }
+        }
+        //Returns the time used for the operation
+        time.toDouble()
+        val totalTime = time.toDouble() / 1000.00
+        totalTime
+    }
+
+    suspend fun histrogramMultiOptimized(coroutinesN: Int): Double = withContext(Dispatchers.Default){
+        var time = measureTimeMillis {
+            var aux: Long = 0
+            val tam = 1000 // Imagen de 1.000 x 1.000 pixeles RGB
+            val imagen = Array(3) { Array(tam){IntArray(tam)} }
+            val h = Array(3) { IntArray(256) } //array con el histograma
+
+            for (i in 0..255)
+            // Inicializa el histograma.
+                for (k in 0..2) h[k][i] = 0
+            for (i in 0 until tam)
+            // Inicializa la imagen.
+                for (j in 0 until tam)
+                    for (k in 0..2) imagen[k][i][j] = (i * j % 256)
+            for (i in 0 until tam)
+            // Contabiliza el nº veces que aparece cada valor.
+                for (j in 0 until tam)
+                    for (k in 0..2) h[k][imagen[k][i][j]]++
+
+            // Modificar imagen utilizando el histograma
+            var listaJobsInit: ArrayList<Deferred<Double>> = arrayListOf<Deferred<Double>>()
+            for (i in 0 until coroutinesN){
+                listaJobsInit.add(async(Dispatchers.Default) { histogramaMultiThread(tam, imagen, h, i, coroutinesN) }) // Get from Default Context)
+            }
+            // waits for all jobs to be done.
+            var sumEachThread = listaJobsInit.awaitAll()
+        }
+        //Returns the time used for the operation
+        time.toDouble()
+        val totalTime = time.toDouble() / 1000.00
+        totalTime
+    }
+
+    suspend fun histogramaMultiThread(tam: Int, imagen: Array<Array<IntArray>>, h: Array<IntArray>, taskId: Int, nTasks: Int): Double {
+        val time = measureTimeMillis {
+            var aux: Long = 0
+            var ini = (  (taskId * tam) / nTasks).toInt()
+            var fin = (((taskId +1).toLong() * tam) / nTasks).toInt()
+
+            for (i in ini until fin) { // Modificar imagen utilizando el histograma
+                for (j in 0 until tam)
+                    for (k in 0..2) {
+                        for (x in 0..255) {
+                            aux = (h[k][x] * h[k][x] * h[k][x] * h[k][x] - h[k][x] * h[k][x] * h[k][x] + h[k][x] * h[k][x]).toLong()
+                            h[k][x] = (aux % 256).toInt()
+                        }
+                        imagen[k][i][j] = (imagen[k][i][j] * h[k][imagen[k][i][j]])
+                    }
+            }
+        }
         return time.toDouble() / 1000.0
     }
-
-
-    // Test Methods to calculate arrays with single and multi-thread solutions
-    suspend fun recorreArreglo(): String {
-
-        var timeSingleCore = measureTimeMillis {
-            val hSuper = Array(100) { DoubleArray(10000) }
-            for (i in 0..9999)
-                for (k in 0..99) hSuper[k][i] = (PI * 1000) * (PI / 100) // Inicializa el histograma
-        }
-        return (timeSingleCore / 1000.0).toString()
-    }
-
-    //TODO: Delete later, only demostrates a way to use 3 cores to work with an array
-    suspend fun recorreArregloMultiThread(): String = withContext(Dispatchers.Default) {
-        // Uses Coroutine to access the array, will use 3 Cores, each one in charge of one third of the array
-            val hSuper = Array(100) { DoubleArray(10000) }
-
-            val tiempo1 = async(Dispatchers.Default) {
-                val time = measureTimeMillis {
-                    for (i in 0..3000)
-                        for (k in 0..99) hSuper[k][i] = (PI * 1000) * (PI / 100) // Inicializa el histograma
-                }
-                time / 1000.0
-            }
-
-            val tiempo2 = async(Dispatchers.Default) {
-                val time = measureTimeMillis {
-                    for (i in 3001..6000)
-                        for (k in 0..99) hSuper[k][i] = (PI * 1000) * (PI / 100) // Inicializa el histograma
-                }
-                time / 1000.0
-            }
-
-            val tiempo3 = async(Dispatchers.Default) {
-                var time = measureTimeMillis {
-                    for (i in 6001..9999)
-                        for (k in 0..99) hSuper[k][i] = (PI * 1000) * (PI / 100) // Inicializa el histograma
-                }
-                time / 1000.0
-            }
-
-            var timeMultiCore = tiempo1.await() + tiempo2.await() + tiempo3.await()
-
-
-
-        (timeMultiCore).toString()
-    }
-
-
 }

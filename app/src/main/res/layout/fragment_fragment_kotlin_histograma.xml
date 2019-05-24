@@ -40,5 +40,66 @@
             app:layout_constraintTop_toTopOf="@+id/btnCorrutine" app:layout_constraintBottom_toBottomOf="@+id/btnCorrutine"
             app:layout_constraintStart_toEndOf="@+id/btnCorrutine" android:layout_marginStart="8dp"
             app:layout_constraintEnd_toEndOf="parent" android:textSize="18sp"/>
+    <Button
+            android:text="Histogram session 2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonSession2" app:layout_constraintStart_toStartOf="@+id/btnCorrutine"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/btnCorrutine"/>
+    <TextView
+            android:text="Session2 Histogram"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtSession2" app:layout_constraintStart_toEndOf="@+id/buttonSession2"
+            android:layout_marginStart="16dp"
+            app:layout_constraintTop_toTopOf="@+id/buttonSession2"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonSession2"
+            android:textSize="18sp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"/>
+    <CheckBox
+            android:text="Multi-Thread"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/checkBMultiThread" android:layout_marginTop="64dp"
+            app:layout_constraintTop_toBottomOf="@+id/buttonSession2"
+            app:layout_constraintStart_toStartOf="@+id/buttonSession2"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            app:layout_constraintStart_toEndOf="@+id/btnMultiThread" android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnMultiThread"
+            app:layout_constraintBottom_toBottomOf="@+id/btnMultiThread">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="Number of Coroutines" android:id="@+id/txtCoroutinesNumber" android:text="8"
+                android:textAlignment="center" android:textSize="18sp"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <Button
+            android:text="MultiThread Session2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnMultiThread" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/checkBMultiThread"
+            app:layout_constraintStart_toStartOf="@+id/checkBMultiThread"/>
+    <TextView
+            android:text="Total time:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtMultiThead"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@+id/btnMultiThread"
+            android:layout_marginTop="24dp" android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintStart_toStartOf="parent"
+            android:textAlignment="center"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
