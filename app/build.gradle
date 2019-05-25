@@ -16,7 +16,8 @@ android {
         externalNativeBuild {
             cmake {
                 version "3.14.2"
-                cppFlags ""
+                arguments ""
+                cppFlags "-std=c++17 -fopenmp -O3"
             }
         }
     }
@@ -30,6 +31,7 @@ android {
         cmake {
             path "src/main/cpp/CMakeLists.txt"
             version "3.14.2"
+
         }
     }
 }
