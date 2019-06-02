@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         configBottomBar()
         this.title = "Calculates Histogram"
 
-        // Loads the first fragment
+        // Loads the first fragment with Kotlin Coroutines to calculate histogram
         loadFragment(fragKotlinHistogram)
 
     }
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Configures the Android default NavBar
+    // Configures the Android default NavBar, but is not used in this project
     // TODO: Delete later
     private fun configNavBar(navBar: BottomNavigationView) {
         navBar.setOnNavigationItemSelectedListener(BottomNavigationView.OnNavigationItemSelectedListener { item ->

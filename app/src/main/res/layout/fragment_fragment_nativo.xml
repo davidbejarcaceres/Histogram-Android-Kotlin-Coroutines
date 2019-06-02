@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:hint="Number of Coroutines" android:id="@+id/txtThreadsNumber" android:text="8"
+                android:hint="Number of Threads" android:id="@+id/txtThreadsNumber" android:text="8"
                 android:textAlignment="center" android:textSize="18sp" android:visibility="visible"
                 android:enabled="false"/>
     </com.google.android.material.textfield.TextInputLayout>

@@ -153,7 +153,6 @@ class FragmentOther : Fragment() {
 
         radioGroup?.setOnCheckedChangeListener { group, checkedId ->
             var text = "You selected: ${checkedId}"
-            //Toast.makeText(this.context, text, Toast.LENGTH_SHORT).show()
         }
 
         btnCalcula.setOnClickListener {

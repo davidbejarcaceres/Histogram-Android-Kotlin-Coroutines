@@ -6,6 +6,7 @@
 #include <vector>
 #include <thread>
 #include <omp.h>
+#include <arm_neon.h>
 #include "Histogram.h"
 #include "RectangularVectors.h"
 
@@ -38,8 +39,8 @@ void multiplicacionCthread(int me, int nth, float * a1, float * a2, float * a3, 
 }
 
 // NEON Implementation
-#if defined(__ARM_ARCH_7A__) && defined(__ARM_NEON__)
-#include <arm_neon.h>
+//#if defined(__ARM_ARCH_7A__) && defined(__ARM_NEON__)
+//#include <arm_neon.h>
 void multiplicacionCneon(int me, int nth, float * A, float * B, float * C, int n) {
     for(int i = (me*n)/nth; i < (me+1)*n/nth; i++){ //Filas
         for (int j = 0; j < n; j+=4) {
@@ -98,7 +99,7 @@ void square_dgemmOMP (int nth, float* A, float* B, float* C, int n)
 }
 
 
-#endif
+//#endif
 
 
 
@@ -366,67 +367,6 @@ Java_com_caceres_bejar_david_histogramakotlin_FragmentNativo_histogramCSingleTh(
     return res;
 }
 
-
-
-extern "C" JNIEXPORT jint JNICALL
-Java_com_caceres_bejar_david_histogramakotlin_FragmentNativo_histogramCMultiOpenMP( JNIEnv *env,
-                                                                    jobject /* this */){
-
-    jint res = 1;
-    int tamano = 1000;
-    long long aux = 0;
-//JAVA TO C++ CONVERTER NOTE: The following call to the 'RectangularVectors' helper class reproduces the rectangular array initialization that is automatic in Java:
-//ORIGINAL LINE: int h[][] = new int[3][256];
-    std::vector<std::vector<int>> h = RectangularVectors::RectangularIntVector(3, 256); //array con el histograma
-    const int tam = 1000; // Imagen de 1.000 x 1.000 pixeles RGB
-//JAVA TO C++ CONVERTER NOTE: The following call to the 'RectangularVectors' helper class reproduces the rectangular array initialization that is automatic in Java:
-//ORIGINAL LINE: int imagen[][][]= new int[3][tam][tam];
-    std::vector<std::vector<std::vector<int>>> imagen = RectangularVectors::RectangularIntVector(3, tam, tam);
-
-    int tid;
-    tid = omp_get_thread_num();
-    printf("Thread = %d\n", tid);
-    __android_log_print(ANDROID_LOG_DEBUG, "DBC770", "\n this is log messge \n");
-
-    for (int i = 0; i < 256; i++) {// Inicializa el histograma.
-        for (int k = 0; k < 3; k++) h[k][i] = 0;
-    }
-    for (int i = 0; i < tam; i++) {// Inicializa la imagen.
-        for (int j = 0; j < tam; j++) {
-            for (int k = 0; k < 3; k++) imagen[k][i][j] = ((i * j) % 256);
-        }
-    }
-
-    #pragma omp critical
-    {
-        for (int i = 0;
-             i < tam; i++) {// Contabiliza el nº veces que aparece cada valor.
-            for (int j = 0; j < tam; j++) {
-                for (int k = 0; k < 3; k++) h[k][imagen[k][i][j]]++;
-            }
-        }
-    }
-
-    #pragma omp for nowait
-    {
-        for (int i = 0; i < tam; i++) { // Modificar imagen utilizando el histograma
-            for (int j = 0; j < tam; j++) {
-                for (int k = 0; k < 3; k++) {
-                    for (int x = 0; x < 256; x++) {
-                        aux = static_cast<long long>(h[k][x] * h[k][x] * h[k][x] * h[k][x] - h[k][x] * h[k][x] * h[k][x] + h[k][x] * h[k][x]);
-                        h[k][x] = (aux % 256);
-                    }
-                    imagen[k][i][j] = (imagen[k][i][j] * h[k][imagen[k][i][j]]);
-                }
-            }
-        }
-    }
-
-    printf("OK");
-    return res;
-}
-
-
 extern "C" JNIEXPORT jint JNICALL
 Java_com_caceres_bejar_david_histogramakotlin_FragmentNativo_histogramCMultiOpenMPBest( JNIEnv *env,
                                                                                     jobject /* this */, jint nThreads){
@@ -435,7 +375,6 @@ Java_com_caceres_bejar_david_histogramakotlin_FragmentNativo_histogramCMultiOpen
     int tamano = 1000;
     long long aux = 0;
     jint const nth = nThreads;
-
 
 
 //JAVA TO C++ CONVERTER NOTE: The following call to the 'RectangularVectors' helper class reproduces the rectangular array initialization that is automatic in Java:
@@ -590,6 +529,7 @@ Java_com_caceres_bejar_david_histogramakotlin_FragmentOther_tiempoCthread(JNIEnv
     float tiempo=0;
     jboolean isCopyA, isCopyB, isCopyC;
 
+
     A = env->GetFloatArrayElements(jA,&isCopyA); // While arrays of objects must be accessed one entry at a time, arrays of primitives can be read and written directly as if they were declared in C.   http://developer.android.com/training/articles/perf-jni.html
     if (A==NULL) __android_log_print(ANDROID_LOG_INFO, "HOOKnative", "Can't get data array A reference");
     else
@@ -621,7 +561,7 @@ Java_com_caceres_bejar_david_histogramakotlin_FragmentOther_tiempoCthread(JNIEnv
                     tiempo = chrono::duration<float>(time2-time1).count();
                 }
                 else if (modo==3) { //Parallel implementation 4 threads + NEON
-#if defined(__ARM_ARCH_7A__) && defined(__ARM_NEON__)
+//#if defined(__ARM_ARCH_7A__) && defined(__ARM_NEON__)
                     vector<thread> t;
                     auto time1 = chrono::high_resolution_clock::now();
 
@@ -632,12 +572,12 @@ Java_com_caceres_bejar_david_histogramakotlin_FragmentOther_tiempoCthread(JNIEnv
 
                     auto time2 = chrono::high_resolution_clock::now();
                     tiempo = chrono::duration<float>(time2-time1).count();
-#else
-                    tiempo=0;
-#endif
+//#else
+                    //tiempo=0;
+//#endif
                 }
                 else if (modo==4) { //Parallel implementation 4 threads + NEON + tiling
-#if defined(__ARM_ARCH_7A__) && defined(__ARM_NEON__)
+//#if defined(__ARM_ARCH_7A__) && defined(__ARM_NEON__)
 
                     vector<thread> t;
                     auto time1 = chrono::high_resolution_clock::now();
@@ -650,9 +590,9 @@ Java_com_caceres_bejar_david_histogramakotlin_FragmentOther_tiempoCthread(JNIEnv
                     square_dgemmOMP(nth,A, B, C, (int) size);
                     auto time2 = chrono::high_resolution_clock::now();
                     tiempo = chrono::duration<float>(time2-time1).count();
-#else
-                    tiempo=0;
-#endif
+//#else
+//                    tiempo=0;
+//#endif
                 }
 //                tiempo = (float)chrono::duration<double,milli>(time2-time1).count();
             }
