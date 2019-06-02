@@ -6,10 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.TextView
-import kotlinx.android.synthetic.main.fragment_fragment_nativo.*
+import android.widget.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -41,10 +38,9 @@ class FragmentNativo : Fragment() {
     }
 
     // Mehtod to access C++ code, is suspend so it can be excecuted in the background
-    external suspend fun stringFromJNI(): String
-    external suspend fun calcHistogramC(tam: Int, imagen: ShortArray, h: IntArray): String
-    external suspend fun histogramaCpth(tam: Int, nthreads: Int, imagen: ShortArray, h: IntArray): String
-    external fun histogramaOpenMP(tam: Int, imagen: ShortArray, h: IntArray): String
+    external  fun stringFromJNI(): String
+    external fun histogramCSingleTh(): Int
+    external fun histogramCMultiOpenMPBest(nThreads: Int): Int
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,65 +49,47 @@ class FragmentNativo : Fragment() {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_fragment_nativo, container, false)
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val tv = view.findViewById<TextView>(R.id.txtNativoJNI)
-        val btnNativeHist = view.findViewById<Button>(R.id.btnCallNativeCode)
-        val btnNativeOpenMP = view.findViewById<Button>(R.id.btnNativeHistogram)
-        val txtTimeNative = view.findViewById<TextView>(R.id.txtHistogramNative)
         val checkMultiThread = view.findViewById<CheckBox>(R.id.checkBMulti)
+        val btnJArrayNative = view.findViewById<Button>(R.id.btnJArray)
+        val txtJArray = view.findViewById<TextView>(R.id.txtJArray)
+        val editTxtNumberThread = view.findViewById<TextView>(R.id.txtThreadsNumber)
 
-        btnNativeHist.setOnClickListener {
-            if (!checkMultiThread.isChecked){
-                GlobalScope.launch (Dispatchers.Main) {
-                    tv.setText("Calculationg with C++ ... ")
-                    var time = measureTimeMillis {
-                        val tam = 1000 // Imagen de 1.000 x 1.000 pixeles RGB
-                        val hvector = IntArray(3 * 256) //vector con el histograma
-                        val imagenvector = ShortArray(3 * tam * tam)
-
-                        var singleThreadJob = async(Dispatchers.Default) { calcHistogramC(tam, imagenvector, hvector) }
-                        println("END FROM C++ Method ${singleThreadJob.await()}")
+        btnJArrayNative.setOnClickListener {
+            if (!checkMultiThread.isChecked){ // Single-Thread: C++
+                txtJArray.setText("Calculation...")
+                GlobalScope.launch(Dispatchers.Main) {
+                    val tiempoCArray = measureTimeMillis {
+                        var timeJArray = async(Dispatchers.Default) { histogramCSingleTh() } // Get from Default Context
+                        println("END FROM C++ using Array not vectors ${timeJArray.await().toString()}")
                     }
-                    tv.setText(time.toString())
+                    println("END FROM C++ using Array not vectors ${tiempoCArray.toString()}")
+                    txtJArray.setText("${tiempoCArray.toString()}")
                 }
             } else {
-                GlobalScope.launch (Dispatchers.Main) {
-                    tv.setText("Calculating... ")
-                    var time = measureTimeMillis {
-                        val tam = 1000 // Imagen de 1.000 x 1.000 pixeles RGB
-                        val hvector = IntArray(3 * 256) //vector con el histograma
-                        val imagenvector = ShortArray(3 * tam * tam)
-
-                        var MultiThreadJob = async(Dispatchers.Default) { histogramaCpth(tam, 8, imagenvector, hvector) }
-                        println("END FROM C++ Method ${MultiThreadJob.await().toString()}")
+                var nThreads: Int = editTxtNumberThread.text.toString().toInt()
+                if (nThreads < 1 || nThreads > 10) nThreads = 8 // If number of coroutine is absurd, 8 are used
+                txtJArray.setText("Calculation...") // Mutli-Thread: OpenMP C++
+                GlobalScope.launch(Dispatchers.Main) {
+                    val tiempoCArray = measureTimeMillis {
+                        var timeJArray = async(Dispatchers.Default) { histogramCMultiOpenMPBest( nThreads ) } // Get from Default Context
+                        println("END FROM C++ using Array not vectors ${timeJArray.await().toString()}")
                     }
-                    tv.setText(time.toString())
+                    println("END FROM C++ using Array not vectors ${tiempoCArray.toString()}")
+                    txtJArray.setText("${tiempoCArray.toString()}")
                 }
             }
         }
 
 
-        btnNativeOpenMP.setOnClickListener {
-            GlobalScope.launch (Dispatchers.Main) {
-                txtTimeNative.setText("Calculatng... ")
-                var time = measureTimeMillis {
-                    val tam = 1000 // Imagen de 1.000 x 1.000 pixeles RGB
-                    val hvector = IntArray(3 * 256) //vector con el histograma
-                    val imagenvector = ShortArray(3 * tam * tam)
-
-                    var MultiThreadJob = async(Dispatchers.Default) { histogramaOpenMP(tam, imagenvector, hvector) }
-                    println("END FROM C++ Method ${MultiThreadJob.await().toString()}")
-                }
-                txtTimeNative.setText(time.toString())
+        checkMultiThread.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked){
+                editTxtNumberThread.setEnabled(true);
+            } else{
+                editTxtNumberThread.setEnabled(false);
             }
-
-        }
-
-
-
-
+        });
     }
 
 }

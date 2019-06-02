@@ -16,8 +16,9 @@ android {
         externalNativeBuild {
             cmake {
                 version "3.14.2"
-                arguments ""
-                cppFlags "-std=c++17 -fopenmp -O3"
+                arguments "-DANDROID_TOOLCHAIN=clang", '-DANDROID_ARM_NEON=TRUE' , "-DANDROID_ARM_MODE=arm", "-DCMAKE_BUILD_TYPE=debug"
+                cppFlags "-std=c++17 -fopenmp -mfloat-abi=softfp -mfpu=neon -flax-vector-conversions"
+                abiFilters  'armeabi-v7a', "arm64-v8a"
             }
         }
     }

@@ -24,18 +24,13 @@ private const val ARG_PARAM2 = "param2"
  */
 class FragmentKotlinHistograma : Fragment() {
 
-    lateinit var btnCalculate: Button
-    lateinit var btnCoroutine: Button
-    lateinit var txtTime: TextView
-    lateinit var txtTimeCoroutine: TextView
-    lateinit var btnSession2: Button
-    lateinit var txtSession2: TextView
-
     lateinit var btnSession2MultiThread: Button
     lateinit var txtSession2MultiThread: TextView
 
     lateinit var checkBoxMultiThread: CheckBox
     lateinit var editTxtNumberThread: EditText
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,13 +42,7 @@ class FragmentKotlinHistograma : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        btnCalculate = view.findViewById(R.id.btnCalculate)
-        btnCoroutine = view.findViewById(R.id.btnCorrutine)
-        txtTime = view.findViewById(R.id.txtHistogram)
-        txtTimeCoroutine = view.findViewById(R.id.txtCorrutine)
 
-        btnSession2 = view.findViewById<Button>(R.id.buttonSession2)
-        txtSession2 = view.findViewById(R.id.txtSession2)
 
         btnSession2MultiThread = view.findViewById<Button>(R.id.btnMultiThread)
         txtSession2MultiThread = view.findViewById(R.id.txtMultiThead)
@@ -61,37 +50,16 @@ class FragmentKotlinHistograma : Fragment() {
         checkBoxMultiThread = view.findViewById(R.id.checkBMultiThread)
         editTxtNumberThread = view.findViewById(R.id.txtCoroutinesNumber)
 
+
+
         checkBoxMultiThread.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked){
                 editTxtNumberThread.setEnabled(true);
             } else{
                 editTxtNumberThread.setEnabled(false);
             }
-        })
+        });
 
-        // Calculates the histogram and return the time to show in the textView
-        btnCalculate.setOnClickListener {
-            txtTime.setText("Calculando...")
-            txtTime.setText(calculateHistogram())
-        }
-
-        // Calculates in the background using Kotlin Corrutines
-        btnCoroutine.setOnClickListener {
-            txtTimeCoroutine.setText("Calculando...")
-            GlobalScope.launch(Dispatchers.Main) {
-                val tiempo = async(Dispatchers.Default) { calculateHistogramCoroutine() } // Get from Default Context
-                txtTimeCoroutine.setText("${tiempo.await()} seg.")
-            }
-        }
-
-        // Calculates histogram using more resouces, part of SESSION 2
-        btnSession2.setOnClickListener {
-            txtSession2.setText("Calculando...")
-            GlobalScope.launch(Dispatchers.Main) {
-                val tiempo = async(Dispatchers.Default) { histrogramMultiOptimized(1) } // Get from Default Context
-                txtSession2.setText("${tiempo.await()} seg.")
-            }
-        }
 
         // Calculates histogram with multiThread capabilities, SESSION 2
         btnSession2MultiThread.setOnClickListener {
@@ -111,7 +79,6 @@ class FragmentKotlinHistograma : Fragment() {
                     }
                     txtSession2MultiThread.setText("${time / 1000.00} seg.")
                     println("TOTAL TIME ONE THREAD: ${time / 1000.00} seg")
-
                 }
             } else{
                 GlobalScope.launch(Dispatchers.Main) {
@@ -124,7 +91,10 @@ class FragmentKotlinHistograma : Fragment() {
                 }
             }
         }
-    }
+
+    }//END OnViewCreated
+
+
 
     // Suspend method to use with Coroutine
     suspend fun calculateHistogramCoroutine(): String = withContext(Dispatchers.Default) {

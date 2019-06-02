@@ -7,47 +7,50 @@
                                                    tools:context=".FragmentNativo" android:id="@+id/frameLayout">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/hello_blank_fragment"
-            android:id="@+id/txtNativoJNI"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:textSize="18sp" app:layout_constraintStart_toEndOf="@+id/btnCallNativeCode"
-            android:layout_marginStart="24dp"
-            app:layout_constraintTop_toTopOf="@+id/btnCallNativeCode"
-            app:layout_constraintBottom_toBottomOf="@+id/btnCallNativeCode" tools:visibility="Time C++"/>
-    <Button
-            android:text="Native session 3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnCallNativeCode"
-            app:layout_constraintStart_toStartOf="@+id/checkBMulti"
-            android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@+id/checkBMulti" android:layout_marginTop="8dp"/>
-    <Button
-            android:text="C++ OpenMP"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnNativeHistogram"
-            android:layout_marginTop="48dp" app:layout_constraintTop_toBottomOf="@+id/txtNativoJNI"
-            app:layout_constraintStart_toStartOf="@+id/btnCallNativeCode"/>
-    <TextView
-            android:text="Time Histogram OpenMP"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/txtHistogramNative"
-            app:layout_constraintTop_toTopOf="@+id/btnNativeHistogram"
-            app:layout_constraintBottom_toBottomOf="@+id/btnNativeHistogram"
-            app:layout_constraintStart_toEndOf="@+id/btnNativeHistogram" android:layout_marginStart="24dp"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp" android:textSize="18sp"/>
     <CheckBox
-            android:text="Multi-Thread C++"
+            android:text="Multi-Thread OpenMP"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/checkBMulti" app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="0.37"/>
+            android:layout_marginTop="32dp"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="60dp"
+            app:layout_constraintVertical_bias="0.22000003"/>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toEndOf="@+id/checkBMulti" android:layout_marginStart="8dp"
+            app:layout_constraintTop_toTopOf="@+id/checkBMulti"
+            app:layout_constraintBottom_toBottomOf="@+id/checkBMulti">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="Number of Coroutines" android:id="@+id/txtThreadsNumber" android:text="8"
+                android:textAlignment="center" android:textSize="18sp" android:visibility="visible"
+                android:enabled="false"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <Button
+            android:text="Calculate C++"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnJArray"
+            android:layout_marginTop="32dp"
+            app:layout_constraintTop_toBottomOf="@+id/checkBMulti"
+            app:layout_constraintStart_toStartOf="@+id/checkBMulti" android:layout_marginStart="8dp"/>
+    <TextView
+            android:text="Time using Array not vector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtJArray"
+            app:layout_constraintTop_toTopOf="@+id/btnJArray" app:layout_constraintBottom_toBottomOf="@+id/btnJArray"
+            app:layout_constraintStart_toEndOf="@+id/btnJArray" android:layout_marginStart="24dp"
+            android:textSize="18sp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

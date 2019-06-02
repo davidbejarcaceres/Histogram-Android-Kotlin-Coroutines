@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                   xmlns:tools="http://schemas.android.com/tools"
-                                                   android:layout_width="match_parent"
-                                                   android:layout_height="match_parent"
-                                                   tools:context=".FragmentOther" android:id="@+id/frameLayout3">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".MainActivity">
 
     <LinearLayout
             android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" android:id="@+id/linearLayout5" android:layout_marginBottom="261dp"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toTopOf="@+id/linearLayout8"
-            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent">
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
 
         <TextView
                 android:layout_width="fill_parent"
@@ -20,7 +17,7 @@
                 android:textStyle="bold"
                 android:textColor="#333300"
                 android:textSize="25dp"
-                android:text="Dimensión de la matriz:"/>
+                android:text="Dimensión de la matriz:" />
 
         <EditText
                 android:layout_width="wrap_content"
@@ -32,16 +29,14 @@
                 android:inputType="number"
                 android:digits="1234567890"
                 android:ems="10"
-                android:id="@+id/Dimension"/>
+                android:id="@+id/Dimension" />
     </LinearLayout>
 
     <LinearLayout
             android:orientation="vertical"
-            android:layout_width="0dp"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="85dp" android:id="@+id/linearLayout6"
-            app:layout_constraintTop_toTopOf="@+id/linearLayout5" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            android:layout_marginTop="85dp">
 
         <TextView
                 android:layout_width="wrap_content"
@@ -51,7 +46,7 @@
                 android:textColor="#336600"
                 android:textSize="25dp"
                 android:text="Escoge una opción:"
-                android:id="@+id/textView"/>
+                android:id="@+id/textView" />
 
         <LinearLayout
                 android:orientation="horizontal"
@@ -64,27 +59,6 @@
                     android:layout_weight="1"
                     android:id="@+id/radiogroup1">
 
-                <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:buttonTint="#33FF33"
-                        android:textSize="16dp"
-                        android:text="Neon (8 thrds)"
-                        android:id="@+id/NativeCneon"/>
-                <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:buttonTint="#33FF33"
-                        android:textSize="16dp"
-                        android:text="Neon+Tile+4thr"
-                        android:id="@+id/NativeCtile"/>
-                <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:buttonTint="#33FF33"
-                        android:textSize="16dp"
-                        android:text="C (8 threads)"
-                        android:id="@+id/NativeCpar"/>
                 <RadioButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -110,26 +84,57 @@
 
             </RadioGroup>
 
+            <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/radiogroup2">
+
+                <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="#33FF33"
+                        android:textSize="16dp"
+                        android:text="C (4 threads)"
+                        android:id="@+id/NativeCpar" />
+
+                <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="#33FF33"
+                        android:textSize="16dp"
+                        android:text="Neon (4 thrds)"
+                        android:id="@+id/NativeCneon" />
+
+                <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="#33FF33"
+                        android:textSize="16dp"
+                        android:text="Neon+Tile+4thr"
+                        android:id="@+id/NativeCtile" />
+            </RadioGroup>
+
         </LinearLayout>
 
         <Button
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:textColor="#FFFFFF"
                 android:textStyle="bold"
+                android:background="#33CC00"
                 android:text="¡CALCULA!"
-                android:id="@+id/Calcula"/>
+                android:onClick="cCalcula"
+                android:id="@+id/Calcula" />
 
     </LinearLayout>
 
     <LinearLayout
             android:orientation="vertical"
-            android:layout_width="0dp"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/linearLayout7" android:layout_marginBottom="271dp"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toTopOf="@+id/linearLayout8"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="24dp">
+            android:layout_marginTop="270dp">
 
         <TextView
                 android:layout_width="fill_parent"
@@ -139,7 +144,7 @@
                 android:textColor="#339900"
                 android:textSize="25dp"
                 android:text="Tiempo de ejecución:"
-                android:id="@+id/textView2"/>
+                android:id="@+id/textView2" />
 
         <TextView
                 android:layout_width="fill_parent"
@@ -149,17 +154,14 @@
                 android:ems="10"
                 android:textSize="25dp"
                 android:textColor="#66CC00"
-                android:id="@+id/ResultadoFragment"/>
+                android:id="@+id/Resultado" />
     </LinearLayout>
 
     <LinearLayout
             android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="340dp" android:id="@+id/linearLayout8"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout7" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toBottomOf="parent">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="340dp">
 
     </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
