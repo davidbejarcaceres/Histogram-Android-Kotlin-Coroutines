@@ -1,0 +1,19 @@
+{
+  "buildFiles": [
+    "C:\\Users\\david\\AppData\\Local\\Android\\sdk\\ndk-bundle\\build\\cmake\\platforms.cmake",
+    "C:\\Users\\david\\AppData\\Local\\Android\\sdk\\ndk-bundle\\build\\cmake\\android.toolchain.cmake",
+    "C:\\Users\\david\\AndroidStudioProjects\\HistogramaKotlin\\app\\src\\main\\cpp\\CMakeLists.txt"
+  ],
+  "cleanCommands": [
+    "ninja.exe -C \"C:\\Users\\david\\AndroidStudioProjects\\HistogramaKotlin\\app\\.cxx\\cmake\\release\\arm64-v8a\" clean"
+  ],
+  "buildTargetsCommand": "ninja.exe -C \"C:\\Users\\david\\AndroidStudioProjects\\HistogramaKotlin\\app\\.cxx\\cmake\\release\\arm64-v8a\" {LIST_OF_TARGETS_TO_BUILD}",
+  "libraries": {
+    "native-lib-release-arm64-v8a": {
+      "artifactName": "native-lib",
+      "buildCommand": "ninja.exe -C \"C:\\Users\\david\\AndroidStudioProjects\\HistogramaKotlin\\app\\.cxx\\cmake\\release\\arm64-v8a\" native-lib",
+      "abi": "arm64-v8a",
+      "output": "C:\\Users\\david\\AndroidStudioProjects\\HistogramaKotlin\\app\\build\\intermediates\\cmake\\release\\obj\\arm64-v8a\\libnative-lib.so"
+    }
+  }
+}

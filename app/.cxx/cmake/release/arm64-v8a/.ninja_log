@@ -1,0 +1,5 @@
+# ninja log v5
+1	2520	5932768512097616	CMakeFiles/native-lib.dir/native-lib.cpp.o	8807ba117b6fcdb
+2526	2790	5932768515085913	C:/Users/david/AndroidStudioProjects/HistogramaKotlin/app/build/intermediates/cmake/release/obj/arm64-v8a/libnative-lib.so	82050bb7bb412c11
+7	2392	5932773147664045	CMakeFiles/native-lib.dir/native-lib.cpp.o	8807ba117b6fcdb
+2392	2633	5932773150209295	C:/Users/david/AndroidStudioProjects/HistogramaKotlin/app/build/intermediates/cmake/release/obj/arm64-v8a/libnative-lib.so	82050bb7bb412c11

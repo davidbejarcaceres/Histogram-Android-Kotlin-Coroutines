@@ -53,4 +53,44 @@
             app:layout_constraintStart_toEndOf="@+id/btnJArray" android:layout_marginStart="24dp"
             android:textSize="18sp"/>
 
+    <Button
+            android:id="@+id/mmopenmp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:text="mmopenmp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <Button
+            android:id="@+id/mmThreads"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="mmThreads"
+            app:layout_constraintStart_toStartOf="@+id/mmopenmp"
+            app:layout_constraintTop_toBottomOf="@+id/mmopenmp" />
+
+    <Button
+            android:id="@+id/btnKotlin1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="btnKotlin1"
+            app:layout_constraintStart_toStartOf="@+id/mmThreads"
+            app:layout_constraintTop_toBottomOf="@+id/mmThreads" />
+
+    <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:text="Matrix Multiplication size 1000"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtJArray" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

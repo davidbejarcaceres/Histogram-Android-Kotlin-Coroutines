@@ -9,9 +9,14 @@
 #include <arm_neon.h>
 #include "Histogram.h"
 #include "RectangularVectors.h"
-
+#include <memory.h>
+#include <malloc.h>
+#include <time.h>
 
 using namespace std;
+
+#define SIZE 1000
+
 
 
 void multiplicacionC(float * a1, float * a2, float * a3, jint size) {
@@ -27,16 +32,33 @@ void multiplicacionC(float * a1, float * a2, float * a3, jint size) {
 }
 
 void multiplicacionCthread(int me, int nth, float * a1, float * a2, float * a3, int size) {
-    for(int i = (me*size)/nth; i < (me+1)*size/nth; i++){ //Filas
-        for(int j = 0; j < size; j++){ //Columnas
-            float cij=a3[i*size+j];
-            for(int k = 0; k < size; k++){
-                a3[i*size+j] += a1[i*size+k]*a2[k*size+j];
-            }
-            a3[i*size+j]=cij;
-        }
-    }
-}
+     for(int i = (me*size)/nth; i < (me+1)*size/nth; i++){ //Filas
+         for(int j = 0; j < size; j++){ //Columnas
+             float cij=a3[i*size+j];
+             for(int k = 0; k < size; k++){
+                 a3[i*size+j] += a1[i*size+k]*a2[k*size+j];
+             }
+             a3[i*size+j]=cij;
+         }
+     }
+ }
+
+ void multiplyMMThreads(int me, int nth, float ** matrixa, float ** matrixb, float ** matrixc) {
+     for(int i = (me*SIZE)/nth; i < (me+1)*SIZE/nth; i++) //Filas
+          for(int j = 0; j < SIZE; j++) //Columnas
+              for(int k = 0; k < SIZE; k++)
+                 matrixc[i][j] += matrixa[i][k] * matrixb[k][j];
+ }
+
+ void multiplyMM(float ** matrixa, float ** matrixb, float ** matrixc) {
+     for(int i = 0; i < SIZE; i++){ //Filas
+         for(int j = 0; j < SIZE; j++){ //Columnas
+             for(int k = 0; k < SIZE; k++){
+                matrixc[i][j] += matrixa[i][k] * matrixb[k][j];
+             }
+         }
+     }
+ }
 
 // NEON Implementation
 //#if defined(__ARM_ARCH_7A__) && defined(__ARM_NEON__)
@@ -257,7 +279,8 @@ Java_com_caceres_bejar_david_histogramakotlin_FragmentNativo_histogramaOpenMP(
         else {
             int tid;
             #pragma omp parallel num_threads(8) private(tid)
-            {omp_set_num_threads(8);
+            {
+            omp_set_num_threads(8);
             tid = omp_get_thread_num();
             printf("Thread = %d\n", tid);
 
@@ -481,6 +504,141 @@ Java_com_caceres_bejar_david_histogramakotlin_FragmentNativo_histogramJArray(
 
     string hello = "Hello from C++";
     return env->NewStringUTF(hello.c_str());
+}
+
+
+
+/////////// Modulo1 ////////
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_caceres_bejar_david_histogramakotlin_FragmentNativo_mmopenmp(
+        JNIEnv *env,
+        jobject /* this */,
+        jint nThreads,
+        jint tam) {
+
+        float **matrixa, **matrixb, **matrixc;
+        float *a_block, *b_block, *c_block;
+
+        matrixa = (float **)malloc(SIZE * sizeof(float *)); /* matrix a to be multiplied */
+        matrixb = (float **)malloc(SIZE * sizeof(float *)); /* matrix b to be multiplied */
+        matrixc = (float **)malloc(SIZE * sizeof(float *)); /* result matrix c */
+
+        a_block = (float *)malloc(SIZE * SIZE * sizeof(float)); /* Storage for matrices */
+        b_block = (float *)malloc(SIZE * SIZE * sizeof(float));
+        c_block = (float *)malloc(SIZE * SIZE * sizeof(float));
+
+        for (int i = 0; i < SIZE; i++)
+        { /* Initialize pointers to a, b, c */
+            matrixa[i] = a_block + i * SIZE;
+            matrixc[i] = c_block + i * SIZE;
+            matrixb[i] = b_block + i * SIZE;
+        }
+
+        /* Initialize the Matrix arrays */
+    #pragma omp parallel for schedule(dynamic)
+        for (int i = 0; i < SIZE; i++)
+            for (int j = 0; j < SIZE; j++)
+                matrixc[i][j] = 0;
+
+    #pragma omp parallel for schedule(dynamic)
+        for (int i = 0; i < SIZE; i++)
+            for (int j = 0; j < SIZE; j++)
+                matrixa[i][j] = matrixb[i][j] = rand() * (float)1.1;
+
+        omp_set_dynamic(0);            // Explicitly disable dynamic teams
+        omp_set_num_threads(nThreads); // Use 8 threads for all consecutive parallel regions
+
+         // To measure time
+         __android_log_print(ANDROID_LOG_INFO, "TIEMPOS", "Starting Time!");
+        // To measure time with OpenMP, uses only real processing time in seconds
+        double start, end;
+        start = omp_get_wtime();
+
+    /* Matrix-Matrix multiply */
+    #pragma omp parallel for schedule(dynamic)
+        for (int i = 0; i < SIZE; i++)
+            for (int j = 0; j < SIZE; j++)
+                for (int k = 0; k < SIZE; k++)
+                    matrixc[i][j] = matrixc[i][j] + matrixa[i][k] * matrixb[k][j];
+
+        end = omp_get_wtime();
+        __android_log_print(ANDROID_LOG_INFO, "TIEMPOS", "time omp = %f", end - start );
+
+
+        string hello = "Hello from mm with pthreads";
+        return env->NewStringUTF(hello.c_str());
+}
+
+
+
+
+/////////// MM Threads Matrix Multiplication ////////
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_caceres_bejar_david_histogramakotlin_FragmentNativo_mmThreads(
+        JNIEnv *env,
+        jobject /* this */,
+        jint nThreads,
+        jint tam) {
+
+
+        float **matrixa, **matrixb, **matrixc;
+        float *a_block, *b_block, *c_block;
+        int nth=8;
+
+        matrixa = (float **)malloc(SIZE * sizeof(float *)); /* matrix a to be multiplied */
+        matrixb = (float **)malloc(SIZE * sizeof(float *)); /* matrix b to be multiplied */
+        matrixc = (float **)malloc(SIZE * sizeof(float *)); /* result matrix c */
+
+        a_block = (float *)malloc(SIZE * SIZE * sizeof(float)); /* Storage for matrices */
+        b_block = (float *)malloc(SIZE * SIZE * sizeof(float));
+        c_block = (float *)malloc(SIZE * SIZE * sizeof(float));
+
+
+        matrixa = (float **)malloc(SIZE * sizeof(float *)); /* matrix a to be multiplied */
+        matrixb = (float **)malloc(SIZE * sizeof(float *)); /* matrix b to be multiplied */
+        matrixc = (float **)malloc(SIZE * sizeof(float *)); /* result matrix c */
+
+        a_block = (float *)malloc(SIZE * SIZE * sizeof(float)); /* Storage for matrices */
+        b_block = (float *)malloc(SIZE * SIZE * sizeof(float));
+        c_block = (float *)malloc(SIZE * SIZE * sizeof(float));
+
+        for (int i = 0; i < SIZE; i++)
+        { /* Initialize pointers to a, b, c */
+            matrixa[i] = a_block + i * SIZE;
+            matrixc[i] = c_block + i * SIZE;
+            matrixb[i] = b_block + i * SIZE;
+        }
+
+        /* Initialize the Matrix arrays */
+    #pragma omp parallel for schedule(dynamic)
+        for (int i = 0; i < SIZE; i++)
+            for (int j = 0; j < SIZE; j++)
+                matrixc[i][j] = 0;
+
+    #pragma omp parallel for schedule(dynamic)
+        for (int i = 0; i < SIZE; i++)
+            for (int j = 0; j < SIZE; j++)
+                matrixa[i][j] = matrixb[i][j] = rand() * (float)1.1;
+
+        // To measure time
+         __android_log_print(ANDROID_LOG_INFO, "TIEMPOS", "Starting Time!");
+        // To measure time with OpenMP, uses only real processing time in seconds
+        double start, end;
+        start = omp_get_wtime();
+
+
+        vector<thread> t;
+        for (int i = 0; i < nThreads; i++)
+            t.push_back(thread(multiplyMMThreads, i, nThreads, matrixa, matrixb, matrixc));
+
+        /* Espera a que terminen los nth threads */
+        for (auto &th: t) th.join();
+
+        end = omp_get_wtime();
+        __android_log_print(ANDROID_LOG_INFO, "TIEMPOS", "time Manual Threads = %f", end - start );
+
+        string hello = "Hello from mm with MM Threads Implementation no Threads";
+        return env->NewStringUTF(hello.c_str());
 }
 
 

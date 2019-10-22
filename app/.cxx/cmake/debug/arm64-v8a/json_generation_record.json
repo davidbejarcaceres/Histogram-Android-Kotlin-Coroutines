@@ -1,0 +1,62 @@
+[
+  {
+    "level": "INFO",
+    "message": "Start JSON generation. Platform version: 22 min SDK version: arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Trying to locate CMake in local SDK repository."
+  },
+  {
+    "level": "INFO",
+    "message": "CMake \u00273.10.2\u0027 found in SDK did not match requested version \u00273.14.2\u0027."
+  },
+  {
+    "level": "INFO",
+    "message": "CMake \u00273.6.0\u0027 found in SDK did not match requested version \u00273.14.2\u0027."
+  },
+  {
+    "level": "INFO",
+    "message": "Trying to locate CMake in PATH."
+  },
+  {
+    "level": "INFO",
+    "message": "- CMake found in PATH at \u0027C:\\Program Files\\CMake\u0027 had version \u00273.14.2\u0027"
+  },
+  {
+    "level": "INFO",
+    "message": "rebuilding JSON C:\\Users\\david\\AndroidStudioProjects\\HistogramaKotlin\\app\\.cxx\\cmake\\debug\\arm64-v8a\\android_gradle_build.json due to:"
+  },
+  {
+    "level": "INFO",
+    "message": "- force flag, will remove stale json folder"
+  },
+  {
+    "level": "INFO",
+    "message": "removing stale contents from \u0027C:\\Users\\david\\AndroidStudioProjects\\HistogramaKotlin\\app\\.cxx\\cmake\\debug\\arm64-v8a\u0027"
+  },
+  {
+    "level": "INFO",
+    "message": "created folder \u0027C:\\Users\\david\\AndroidStudioProjects\\HistogramaKotlin\\app\\.cxx\\cmake\\debug\\arm64-v8a\u0027"
+  },
+  {
+    "level": "INFO",
+    "message": "executing cmake Executable : C:\\Program Files\\CMake\\bin\\cmake.exe\narguments : \n-HC:\\Users\\david\\AndroidStudioProjects\\HistogramaKotlin\\app\\src\\main\\cpp\n-BC:\\Users\\david\\AndroidStudioProjects\\HistogramaKotlin\\app\\.cxx\\cmake\\debug\\arm64-v8a\n-DANDROID_ABI\u003darm64-v8a\n-DANDROID_PLATFORM\u003dandroid-22\n-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003dC:\\Users\\david\\AndroidStudioProjects\\HistogramaKotlin\\app\\build\\intermediates\\cmake\\debug\\obj\\arm64-v8a\n-DCMAKE_BUILD_TYPE\u003dDebug\n-DANDROID_NDK\u003dC:\\Users\\david\\AppData\\Local\\Android\\Sdk\\ndk-bundle\n-DCMAKE_CXX_FLAGS\u003d-std\u003dc++17 -O3 -fopenmp -openmp -mfloat-abi\u003dsoftfp -mfpu\u003dneon -flax-vector-conversions\n-DCMAKE_SYSTEM_NAME\u003dAndroid\n-DCMAKE_ANDROID_ARCH_ABI\u003darm64-v8a\n-DCMAKE_SYSTEM_VERSION\u003d22\n-DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON\n-DCMAKE_ANDROID_NDK\u003dC:\\Users\\david\\AppData\\Local\\Android\\Sdk\\ndk-bundle\n-DCMAKE_TOOLCHAIN_FILE\u003dC:\\Users\\david\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\build\\cmake\\android.toolchain.cmake\n-G Ninja\n-DANDROID_TOOLCHAIN\u003dclang\n-DHAVE_NEON\u003d1\n-DANDROID_ABI\u003darm64-v8a\n-DANDROID_ARM_NEON\u003dTRUE\n-DANDROID_ARM_MODE\u003darm\n-DCMAKE_BUILD_TYPE\u003drelease\njvmArgs : \n\n"
+  },
+  {
+    "level": "INFO",
+    "message": "done executing cmake"
+  },
+  {
+    "level": "INFO",
+    "message": "write build output C:\\Users\\david\\AndroidStudioProjects\\HistogramaKotlin\\app\\.cxx\\cmake\\debug\\arm64-v8a\\build_output.txt"
+  },
+  {
+    "level": "INFO",
+    "message": "write command file C:\\Users\\david\\AndroidStudioProjects\\HistogramaKotlin\\app\\.cxx\\cmake\\debug\\arm64-v8a\\build_command.txt"
+  },
+  {
+    "level": "INFO",
+    "message": "JSON generation completed without problems"
+  }
+]

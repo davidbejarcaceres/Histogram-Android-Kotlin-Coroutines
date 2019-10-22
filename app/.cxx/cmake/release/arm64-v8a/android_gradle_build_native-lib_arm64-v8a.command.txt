@@ -1,0 +1,7 @@
+Executable : ninja.exe
+arguments : 
+-C
+C:\Users\david\AndroidStudioProjects\HistogramaKotlin\app\.cxx\cmake\release\arm64-v8a
+native-lib
+jvmArgs : 
+
